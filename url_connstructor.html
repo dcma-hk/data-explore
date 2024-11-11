@@ -68,6 +68,21 @@
             word-break: break-all;
             font-family: monospace;
         }
+        #urlLink {
+            color: #0066cc;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        #urlLink:hover {
+            color: #003366;
+            text-decoration: underline;
+        }
+        .button-group {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
         button {
             background-color: #4CAF50;
             color: white;
@@ -79,6 +94,12 @@
         }
         button:hover {
             background-color: #45a049;
+        }
+        .button-open {
+            background-color: #0066cc;
+        }
+        .button-open:hover {
+            background-color: #003366;
         }
         .copied {
             color: green;
@@ -93,6 +114,15 @@
             .base-url-section input {
                 width: 100%;
                 margin-bottom: 10px;
+            }
+            .button-group {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .copied {
+                text-align: center;
+                margin-top: 10px;
+                margin-left: 0;
             }
         }
     </style>
@@ -164,10 +194,14 @@
 
         <!-- Full Width URL Section -->
         <div class="url-section">
-            <div id="result">Generated URL will appear here</div>
-            <br>
-            <button onclick="copyToClipboard()">Copy URL</button>
-            <span id="copied" class="copied">✓ Copied!</span>
+            <div id="result">
+                <a href="#" id="urlLink">Generated URL will appear here</a>
+            </div>
+            <div class="button-group">
+                <button onclick="copyToClipboard()">Copy URL</button>
+                <button onclick="openURL()" class="button-open">Open URL</button>
+                <span id="copied" class="copied">✓ Copied!</span>
+            </div>
         </div>
     </div>
 
@@ -190,11 +224,13 @@
             const cleanBaseUrl = baseUrl.replace(/\/+$/, '');
 
             const url = `https://${cleanBaseUrl}?${params.toString()}`;
-            document.getElementById('result').textContent = url;
+            const urlLink = document.getElementById('urlLink');
+            urlLink.href = url;
+            urlLink.textContent = url;
         }
 
         function copyToClipboard() {
-            const url = document.getElementById('result').textContent;
+            const url = document.getElementById('urlLink').href;
             navigator.clipboard.writeText(url).then(() => {
                 const copied = document.getElementById('copied');
                 copied.style.display = 'inline';
@@ -202,6 +238,11 @@
                     copied.style.display = 'none';
                 }, 2000);
             });
+        }
+
+        function openURL() {
+            const url = document.getElementById('urlLink').href;
+            window.open(url, '_blank');
         }
 
         // Add event listeners to all inputs including base URL
@@ -214,6 +255,9 @@
             document.getElementById(field).addEventListener('input', updateURL);
             document.getElementById(field).addEventListener('change', updateURL); // For select elements
         });
+
+        // Initial URL generation
+        updateURL();
     </script>
 </body>
 </html>
